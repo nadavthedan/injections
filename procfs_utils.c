@@ -1,4 +1,5 @@
 #include "procfs_utils.h"
+#include <cstdio>
 #include <errno.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -93,4 +94,67 @@ long procfs_find_memory_region(long pid, bool get_region_start_address,
 
 long procfs_find_executable_region_start_address(long pid) {
   return procfs_find_memory_region(pid, true, "r-x");
+}
+
+long procfs_find_executable_region_end_address(long pid) {
+  return procfs_find_memory_region(pid, false, "r-x");
+}
+
+long procfs_get_stack_pointer(long pid) {
+  char path[256];
+  char *endptr;
+
+  snprintf(path, sizeof(path), "/proc/%ld/syscall", pid);
+  FILE *file = fopen(path, "r");
+  if (file == NULL) {
+    fprintf(stderr, "Failed fopen: %s\n", strerror(errno));
+    return -1;
+  }
+
+  char line[MAX_LINE_LENGTH];
+  fgets(line, sizeof(line), file);
+  fclose(file);
+
+  char *token = strtok(line, " ");
+  char *last_chunk, *prev_chunk;
+
+  while (token != NULL) {
+    if (last_chunk != NULL) {
+      prev_chunk = last_chunk;
+    }
+    last_chunk = token;
+    token = strtok(NULL, " ");
+  }
+  return strtol(prev_chunk, &endptr, 16);
+}
+
+long procfs_get_stack_return_address(long stack_address, long pid,
+                                     long text_address, long text_size) {
+  char filepath[256];
+  snprintf(filepath, sizeof(filepath), "/proc/%ld/mem", pid);
+  FILE *file = fopen(filepath, "r+");
+  if (file == NULL) {
+    fprintf(stderr, "Failed fopen: %s\n", strerror(errno));
+    return -1;
+  }
+
+  if (fseek(file, stack_address, SEEK_SET) != 0) {
+    fprintf(stderr, "Failed fseek: %s\n", strerror(errno));
+    fclose(file);
+    return -1;
+  }
+
+  long stack_content;
+  while (file) {
+    fread(&stack_content, sizeof(long), 1, file);
+    stack_address += sizeof(long);
+    if ((stack_content > text_address) &&
+        ((stack_content - text_address) < text_size)) {
+      stack_address -= sizeof(long);
+      return stack_address;
+    }
+  }
+
+  fclose(file);
+  return 0;
 }
