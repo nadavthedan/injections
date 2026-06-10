@@ -26,7 +26,7 @@ int process_vm_writev_stack_overwrite_exec(long pid, long address) {
   long text_section_size = text_section_end - text_section_start;
 
   long stack_ret_address = procfs_get_stack_return_address(
-      stack_pointer, pid, text_section_start, text_section_end);
+      stack_pointer, pid, text_section_start, text_section_size);
 
   process_vm_writev_write(pid, stack_ret_address, &address, sizeof(long));
 
