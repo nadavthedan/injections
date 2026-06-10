@@ -1,5 +1,4 @@
 #include "procfs_utils.h"
-#include <cstdio>
 #include <errno.h>
 #include <stdbool.h>
 #include <stdio.h>
