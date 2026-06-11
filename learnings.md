@@ -1,12 +1,15 @@
 In this file I will describe shortly what I learned about some of those injections.
 
-# ptrace (or other runtime code remote process memory interaction) with procfs
+# ptrace (or other runtime code remote process memory interaction)
+
+I used a combination of ptrace and process_vm_writev just to feel them out.
+ptrace doesn't require write permissions while process_vm_writev does (but it is easy to find writable parts of a process memory)
 
 Those techniques didn't really strike me as impressive (at least on their own).
 
 They could only be used if:
 
-- ptrace_scope is 1 or 0 (which isn't the case defaultly most of the time).
+- ptrace_scope is 1 or 0 (which isn't the default case most of the time).
 - the process dumpable attribute wasn't manually set to false (through prctl).
 
 It is pretty easily detectable through:
