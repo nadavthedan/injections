@@ -1,4 +1,3 @@
-#include "sandbox.h"
 #include "proc_vm_writev_premitives.h"
 #include "procfs_utils.h"
 #include <signal.h>
@@ -8,6 +7,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/ptrace.h>
+#include <sys/user.h>
+#include <sys/wait.h>
 
 int ptrace_poketext_write(long pid, long addr, const char *payload) {
   ptrace(PTRACE_ATTACH, pid, NULL, NULL);

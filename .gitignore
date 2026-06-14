@@ -1,3 +1,6 @@
+bins/
+compile_commands.json
+
 # Prerequisites
 *.d
 
