@@ -16,7 +16,9 @@ It is pretty easily detectable through:
 - syscall montoring
 - process anomalies
 
-It could be used with:
+## Different types of hijacks
+
+This injection could be used with:
 
 - stack hijacking
 - ROP stack hijacking
@@ -26,12 +28,13 @@ Though I don't really know if the different hijacks are important and what benef
 I could guess some are more stealthy then others, and some may be more easily detectable then others.
 Maybe different hijackings could be useful to inject at different specific states of the code execution.
 
-//TODO: research uses of different types of hijacking.
-// Answer:
+## Possibilities
 
-This also disappointed me when I tried to hijack a privileged process. This is not possible with this method (at least to what I could figure out for now).
+You can execute any shell-code with this injection from any running process (and hook it at different places based on the type of the hijack and more).
 
-What I think this can be used for is stealth, loading shared objects for some purpose and more.
+It is not possible to use this technique on privileged processes, when the process ran to do the injection is not privileged.
+
+This can be used for is stealth, loading shared objects for some purpose, using other processes for shady activity (or activity that sound more logical for them to do) and more.
 
 It retains context, that means that if a Process has capabilities you can inherit them.
 You also have access to active connections (db connections / api authenticated sessions), and data in the memory of the process.
@@ -41,6 +44,6 @@ A unique thing that is great about it is that it could be used on a already runn
 
 # Stealth
 
-While this injection could be stealthy and triggered at specific timings and hooks, recovery must be handled really carefully to avoid suspicion or detection.
+While this injection could be sneaky, stealthy and triggered at specific timings and hooks, recovery must be handled really carefully to avoid suspicion or detection.
 It is way harder of a recovery then other methods such as hooking with LD_PRELOAD.
 Any error in recovery or even in the hijacking itself could crash the process and alert the system admin.
