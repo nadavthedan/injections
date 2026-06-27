@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-void secret_function() {
-  printf("Success: root hijacked.");
+void __attribute__((force_align_arg_pointer)) secret_function() {
+  printf("Success: root hijacked.\n");
+  fflush(stdout);
   system("/bin/sh");
 }
 
